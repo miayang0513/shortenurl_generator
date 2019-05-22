@@ -12,7 +12,8 @@ router.get('/shorten', (req, res) => {
     if (url) {
       res.redirect('/shorten')
     } else {
-      const newUrl = 'http:localhost:3000/' + shortenUrl
+      const baseUrl = process.env.shortenurl_generator_URL || 'http:localhost:3000/'
+      const newUrl = baseUrl + shortenUrl
       Url.create({
         originUrl: req.query.url,
         shortenUrl,
