@@ -9,9 +9,9 @@ app.set('view engine', 'pug')
 
 const db = mongoose.connection
 mongoose.set('debug', true)
-mongoose.connect('mongodb://localhost/shortUrl', {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/todo', {
   useNewUrlParser: true,
-  useCreateIndex: true
+  useCreateIndex: true,
 })
 
 db.on('error', () => {
@@ -24,7 +24,7 @@ db.once('open', () => {
 
 app.use('/', require('./route'))
 
-app.listen(port, () => {
-  console.log(`App is running on http://localhost:${port}`)
+app.listen(process.env.PORT || 3000, () => {
+  console.log('App is running')
 })
 
