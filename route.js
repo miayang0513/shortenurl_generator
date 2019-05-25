@@ -6,22 +6,21 @@ router.get('/', (req, res) => {
   res.render('index')
 })
 
-router.get('/shorten', (req, res) => {
-  const shortenUrl = sample()
-  Url.findOne({ shortenUrl }).then(url => {
-    if (url) {
-      res.redirect(307, '/shorten')
-    } else {
-      const baseUrl = process.env.shortenurl_generator_URL || 'http:localhost:3000/'
-      const newUrl = baseUrl + shortenUrl
-      Url.create({
-        originUrl: req.query.url,
-        shortenUrl,
-        newUrl
-      }).then(() => {
-        res.render('new', { newUrl, originUrl: req.query.url })
-      })
-    }
+router.get('/shorten', async (req, res) => {
+  let shortenUrl
+  while (true) {
+    shortenUrl = sample()
+    const duplicate = await Url.findOne({ shortenUrl }).exec()
+    if (duplicate === null) break
+  }
+  const baseUrl = process.env.shortenurl_generator_URL || 'http:localhost:3000/'
+  const newUrl = baseUrl + shortenUrl
+  Url.create({
+    originUrl: req.query.url,
+    shortenUrl,
+    newUrl
+  }).then(() => {
+    res.render('new', { newUrl, originUrl: req.query.url })
   })
 })
 
